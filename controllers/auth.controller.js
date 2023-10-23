@@ -11,61 +11,7 @@ exports.signup = async(req, res) => {
     if (!req.body.password || typeof req.body.password !== "string") {
         return res.status(400).send({ message: "Password is required and must be a string." });
     }
-    /*const user = new User({
-        username: req.body.username,
-        email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, 8),
-        roles: req.body.roles
-    });
 
-    await user.save((err, user) => {
-        if (err) {
-            console.log('error')
-            res.status(500).send({ message: err });
-            return;
-        }
-
-        if (req.body.roles) {
-            console.log('no error')
-            Role.find({
-                    name: { $in: req.body.roles[0] },
-                },
-                (err, roles) => {
-                    if (err) {
-                        res.status(500).send({ message: err });
-                        return;
-                    }
-
-                    user.roles = roles.map((role) => role._id);
-                    user.save((err) => {
-                        if (err) {
-                            res.status(500).send({ message: err });
-                            return;
-                        }
-
-                        res.send({ message: "User was registered successfully!" });
-                    });
-                }
-            );
-        } else {
-            Role.findOne({ name: "user" }, (err, role) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
-
-                user.roles = [role._id];
-                user.save((err) => {
-                    if (err) {
-                        res.status(500).send({ message: err });
-                        return;
-                    }
-
-                    res.send({ message: "User was registered successfully!" });
-                });
-            });
-        }
-    });*/
     try {
         const user = new User({
             username: req.body.username,
@@ -207,3 +153,32 @@ exports.signout = async(req, res) => {
         this.next(err);
     }
 };
+
+// exports.resetPassword = async(req, res) => {
+//     const { token } = req.params;
+//     const { password } = req.body;
+
+//     try {
+//         const decoded = jwt.verify(token, 'your-secret-key');
+
+//         const user = await User.findOne({
+//             email: decoded.email,
+//             resetToken: token,
+//             resetTokenExpiration: { $gt: new Date() },
+//         });
+
+//         if (!user) {
+//             return res.status(401).json({ message: 'Invalid or expired token' });
+//         }
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         user.password = hashedPassword;
+//         user.resetToken = null;
+//         user.resetTokenExpiration = null;
+
+//         await user.save();
+
+//         res.status(200).json({ message: 'Password reset successfully' });
+//     } catch (error) {
+//         res.status(401).json({ message: 'Invalid or expired token' });
+//     }
+// };
