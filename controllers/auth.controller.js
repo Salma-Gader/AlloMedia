@@ -227,3 +227,47 @@ exports.resetPassword = async(req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 }
+exports.signout = (req, res) => {
+    try {
+        res.clearCookie('token');
+        res.status(200).send({ message: "Successfully signed out." });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: "An error occurred while signing out." });
+    }
+};
+
+
+exports.getuserbyrole = async(req, res) => {
+    const role = req.body.email
+    try {
+        const usersWithRole = await User.find({ roles: role });
+        return res.status(200).json({ usersWithRole })
+
+
+    } catch (error) {
+        console.error('Error while fetching users by role:', error);
+        throw error;
+    }
+};
+
+exports.findUserRoleByEmail = async(req, res) => {
+    const email = req.body.email;
+
+    try {
+        const user = await User.findOne({ email: email });
+
+        if (user) {
+            if (user.roles && user.roles.length > 0) {
+                res.json({ roles: user.roles }); // Return the user's roles array
+            } else {
+                res.status(404).json({ message: 'User has no roles assigned' });
+            }
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ message: 'Error occurred while fetching user data' });
+    }
+};
